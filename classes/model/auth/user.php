@@ -10,14 +10,14 @@ class Model_Auth_User extends ORM {
 	(
 		'username'			=> array
 		(
-			'not_empty',
+			'not_empty'			=> NULL,
 			'min_length'		=> array(4),
 			'max_length'		=> array(32),
-			'regex'				=> array('![^a-zA-Z0-9_.]!u'),
+			'regex'				=> array('![a-zA-Z0-9_.]!u'),
 		),
 		'password'			=> array
 		(
-			'not_empty',
+			'not_empty'			=> NULL,
 			'min_length'		=> array(5),
 			'max_length'		=> array(42),
 		),
@@ -27,10 +27,10 @@ class Model_Auth_User extends ORM {
 		),
 		'email'				=> array
 		(
-			'not_empty',
+			'not_empty'			=> NULL,
 			'min_length'		=> array(4),
 			'max_length'		=> array(127),
-			'validate::email',
+			'validate::email'	=> NULL,
 		),
 	);
 
@@ -56,22 +56,18 @@ class Model_Auth_User extends ORM {
 	 * @param  array    errors
 	 * @return boolean
 	 */
-	public function validate(array & $array, $save = FALSE, & $errors)
+	public function validate(array & $array, $save = FALSE)
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
-/*			->rule('email', 'required', 'length[4,127]', 'validate::email', array($this, 'email_available'))
-			->rule('username', 'required', 'length[4,32]', 'chars[a-zA-Z0-9_.]', array($this, 'username_available'))
-			->rule('password', 'required', 'length[5,42]')
-			->rule('password_confirm', 'matches[password]');*/
-			->rules('email', $this->rules['email'])
+			->rule_set('email', $this->rules['email'])
 			->callback('email', array($this, 'email_available'))
-			->rules('username', $this->rules['username'])
+			->rule_set('username', $this->rules['username'])
 			->callback('username', array($this, 'username_available'))
-			->rules('password', $this->rules['password'])
-			->rules('password_confirm', $this->rules['password']);
+			->rule_set('password', $this->rules['password'])
+			->rule_set('password_confirm', $this->rules['password']);
 
-		return parent::validate($array, $save, $errors);
+		return parent::validate($array, $save);
 	}
 
 	/**
@@ -85,14 +81,14 @@ class Model_Auth_User extends ORM {
 	public function login(array & $array, $redirect = FALSE)
 	{
 		$array = Validate::factory($array)
-			->pre_filter('trim')
-			->add_rules('username', 'required', 'length[4,127]')
-			->add_rules('password', 'required', 'length[5,42]');
+			->filter(TRUE, 'trim')
+			->rule_set('username', $this->rules['username'])
+			->rule_set('password', $this->rules['password']);
 
 		// Login starts out invalid
 		$status = FALSE;
 
-		if ($array->validate())
+		if ($array->check())
 		{
 			// Attempt to load the user
 			$this->find($array['username']);
@@ -110,7 +106,7 @@ class Model_Auth_User extends ORM {
 			}
 			else
 			{
-				$array->add_error('username', 'invalid');
+				$array->error('username', 'invalid');
 			}
 		}
 
@@ -126,12 +122,12 @@ class Model_Auth_User extends ORM {
 	 */
 	public function change_password(array & $array, $save = FALSE)
 	{
-		$array = Validation::factory($array)
-			->pre_filter('trim')
-			->add_rules('password', 'required', 'length[5,127]')
-			->add_rules('password_confirm', 'matches[password]');
+		$array = Validate::factory($array)
+			->filter(TRUE, 'trim')
+			->rule_set('password', $this->rules['password'])
+			->rule_set('password_confirm', $this->rules['password_confirm']);
 
-		if ($status = $array->validate())
+		if ($status = $array->check())
 		{
 			// Change the password
 			$this->password = $array['password'];
@@ -194,7 +190,7 @@ class Model_Auth_User extends ORM {
 	public function unique_key_exists($value)
 	{
 		return (bool) DB::select(array('COUNT("*")', 'total_count '))
-						->from($this->table_name)
+						->from($this->db->table_prefix().$this->table_name)
 						->where($this->unique_key($value), '=', $value)
 						->execute($this->db)
 						->get('total_count');
