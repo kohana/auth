@@ -65,7 +65,7 @@ class Model_Auth_User extends ORM {
 			->rules('username', $this->rules['username'])
 			->callback('username', array($this, 'username_available'))
 			->rules('password', $this->rules['password'])
-			->rules('password_confirm', $this->rules['password']);
+			->rules('password_confirm', $this->rules['password_confirm']);
 
 		return parent::validate($array, $save);
 	}
