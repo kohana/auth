@@ -10,24 +10,24 @@ class Model_Auth_User extends ORM {
 	(
 		'username'			=> array
 		(
-			'not_empty'			=> NULL,
+			'not_empty'		=> NULL,
 			'min_length'		=> array(4),
 			'max_length'		=> array(32),
-			'regex'				=> array('![a-zA-Z0-9_.]!u'),
+			'regex'			=> array('![a-zA-Z0-9_.]!u'),
 		),
 		'password'			=> array
 		(
-			'not_empty'			=> NULL,
+			'not_empty'		=> NULL,
 			'min_length'		=> array(5),
 			'max_length'		=> array(42),
 		),
 		'password_confirm'	=> array
 		(
-			'matches'			=> array('password'),
+			'matches'		=> array('password'),
 		),
 		'email'				=> array
 		(
-			'not_empty'			=> NULL,
+			'not_empty'		=> NULL,
 			'min_length'		=> array(4),
 			'max_length'		=> array(127),
 			'validate::email'	=> NULL,
@@ -60,12 +60,12 @@ class Model_Auth_User extends ORM {
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
-			->rule_set('email', $this->rules['email'])
+			->rules('email', $this->rules['email'])
 			->callback('email', array($this, 'email_available'))
-			->rule_set('username', $this->rules['username'])
+			->rules('username', $this->rules['username'])
 			->callback('username', array($this, 'username_available'))
-			->rule_set('password', $this->rules['password'])
-			->rule_set('password_confirm', $this->rules['password']);
+			->rules('password', $this->rules['password'])
+			->rules('password_confirm', $this->rules['password']);
 
 		return parent::validate($array, $save);
 	}
@@ -82,8 +82,8 @@ class Model_Auth_User extends ORM {
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
-			->rule_set('username', $this->rules['username'])
-			->rule_set('password', $this->rules['password']);
+			->rules('username', $this->rules['username'])
+			->rules('password', $this->rules['password']);
 
 		// Login starts out invalid
 		$status = FALSE;
@@ -124,8 +124,8 @@ class Model_Auth_User extends ORM {
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
-			->rule_set('password', $this->rules['password'])
-			->rule_set('password_confirm', $this->rules['password_confirm']);
+			->rules('password', $this->rules['password'])
+			->rules('password_confirm', $this->rules['password_confirm']);
 
 		if ($status = $array->check())
 		{
@@ -154,13 +154,11 @@ class Model_Auth_User extends ORM {
 	 * @param    array     $errors  current validation errors
 	 * @return   array
 	 */
-	public function username_available(Validate $array, $field, array $errors)
+	public function username_available(Validate $array, $field)
 	{
 		if ($this->unique_key_exists($array[$field])) {
-			$errors[$field] = __('Username is already in use');
+			$array->error($field, 'username_available', array($array[$field]));
 		}
-
-		return $errors;
 	}
 
 	/**
@@ -172,13 +170,11 @@ class Model_Auth_User extends ORM {
 	 * @param    array     $errors  current validation errors
 	 * @return   array
 	 */
-	public function email_available(Validate $array, $field, array $errors)
+	public function email_available(Validate $array, $field)
 	{
 		if ($this->unique_key_exists($array[$field])) {
-			$errors[$field] = __('Email is already in use');
+			$array->error($field, 'email_available', array($array[$field]));
 		}
-
-		return $errors;
 	}
 
 	/**
