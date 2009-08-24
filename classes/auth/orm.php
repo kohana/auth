@@ -18,7 +18,7 @@ class Auth_ORM extends Auth {
 	 * @param   array    collection of role names
 	 * @return  boolean
 	 */
-	public function logged_in($role)
+	public function logged_in($role = NULL)
 	{
 		$status = FALSE;
 
