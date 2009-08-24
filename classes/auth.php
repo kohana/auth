@@ -5,7 +5,7 @@
  *
  * @package    Auth
  * @author     Kohana Team
- * @copyright  (c) 2007 Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
 abstract class Auth {
@@ -20,16 +20,13 @@ abstract class Auth {
 			// Load the configuration for this type
 			$config = Kohana::config('auth');
 
-			if (! $type = $config->get('driver'))
+			if ( ! $type = $config->get('driver'))
 			{
 				$type = 'ORM';
 			}
 
 			// Set the session class name
 			$class = 'Auth_'.ucfirst($type);
-
-			if ( ! Kohana::auto_load($class))
-				throw new Kohana_Exception('core.driver_not_found', $config['driver'], get_class($this));
 
 			// Create a new session instance
 			Auth::$instance = new $class($config);
@@ -48,9 +45,9 @@ abstract class Auth {
 		return new Auth($config);
 	}
 
-        protected $session;
+	protected $session;
 
-        protected $config;
+	protected $config;
 
 	/**
 	 * Loads Session and configuration options.
@@ -59,9 +56,6 @@ abstract class Auth {
 	 */
 	public function __construct($config = array())
 	{
-		// Append default auth configuration
-//		$config += Kohana::config('auth');
-
 		// Clean up the salt pattern and split it into an array
 		$config['salt_pattern'] = preg_split('/,\s*/', Kohana::config('auth')->get('salt_pattern'));
 
@@ -69,14 +63,11 @@ abstract class Auth {
 		$this->config = $config;
 
         $this->session = Session::instance();
-
-		//Kohana_Log::add('debug', 'Auth Library loaded');
 	}
 
-    abstract protected function _login($username, $password, $remember);
+	abstract protected function _login($username, $password, $remember);
 
 	abstract public function password($username);
-
 
 	/**
 	 * Gets the currently logged in user from the session.
@@ -84,8 +75,9 @@ abstract class Auth {
 	 *
 	 * @return  mixed
 	 */
-	public function get_user() {
-		if ($this->logged_in(NULL))
+	public function get_user()
+	{
+		if ($this->logged_in())
 		{
 			return $this->session->get($this->config['session_key']);
 		}
@@ -142,7 +134,7 @@ abstract class Auth {
 		}
 
 		// Double check
-		return ! $this->logged_in(NULL);
+		return ! $this->logged_in();
 	}
 
 	/**
