@@ -3,10 +3,10 @@
 class Model_Auth_User_Token extends ORM {
 
 	// Relationships
-	protected $belongs_to = array('user');
+	protected $_belongs_to = array('user' => array());
 
 	// Current timestamp
-	protected $now;
+	protected $_now;
 
 	/**
 	 * Handles garbage collection and deleting of expired objects.
@@ -16,7 +16,7 @@ class Model_Auth_User_Token extends ORM {
 		parent::__construct($id);
 
 		// Set the now, we use this a lot
-		$this->now = time();
+		$this->_now = time();
 
 		if (mt_rand(1, 100) === 1)
 		{
@@ -24,7 +24,7 @@ class Model_Auth_User_Token extends ORM {
 			$this->delete_expired();
 		}
 
-		if ($this->expires < $this->now)
+		if ($this->expires < $this->_now)
 		{
 			// This object has expired
 			$this->delete();
@@ -37,11 +37,11 @@ class Model_Auth_User_Token extends ORM {
 	 */
 	public function save()
 	{
-		if ($this->loaded === FALSE)
+		if ($this->loaded() === FALSE)
 		{
 			// Set the created time, token, and hash of the user agent
-			$this->created = $this->now;
-			$this->user_agent = sha1(Kohana::$user_agent);
+			$this->created = $this->_now;
+			$this->user_agent = sha1(Request::$user_agent);
 		}
 
 		// Create a new token each time the token is saved
@@ -58,7 +58,9 @@ class Model_Auth_User_Token extends ORM {
 	public function delete_expired()
 	{
 		// Delete all expired tokens
-		$this->db->where('expires <', $this->now)->delete($this->table_name);
+		DB::delete($this->_table_name)
+			->where('expires', '<', $this->_now)
+			->execute($this->_db);
 
 		return $this;
 	}
@@ -78,25 +80,17 @@ class Model_Auth_User_Token extends ORM {
 			$token = text::random('alnum', 32);
 
 			// Make sure the token does not already exist
-			if ($this->db->select('id')->where('token', $token)->get($this->table_name)->count() === 0)
+			$count = DB::select('id')
+				->where('token', '=', $token)
+				->from($this->_table_name)
+				->execute($this->_db)
+				->count();
+			if ($count === 0)
 			{
 				// A unique token has been found
 				return $token;
 			}
 		}
-	}
-
-	/**
-	 * Allows loading by token string.
-	 */
-	public function unique_key($id)
-	{
-		if ( ! empty($id) AND is_string($id) AND ! ctype_digit($id))
-		{
-			return 'token';
-		}
-
-		return parent::unique_key($id);
 	}
 
 } // End Auth User Token Model
