@@ -25,7 +25,7 @@ class Auth_ORM extends Auth {
 		// Get the user from the session
 		$user = $this->session->get($this->config['session_key']);
 
-		if (is_object($user) AND $user instanceof Model_User AND $user->loaded)
+		if (is_object($user) AND $user instanceof Model_User AND $user->loaded())
 		{
 			// Everything is okay so far
 			$status = TRUE;
@@ -41,10 +41,10 @@ class Auth_ORM extends Auth {
 					{
 						if ( ! is_object($role_iteration))
 						{
-							$role_iteration = ORM::factory('role', $role_iteration);
+							$role_iteration = ORM::factory('role', array('name', $role_iteration))->find();
 						}
 						// If the user doesn't have the role
-						if( ! $user->has($role_iteration))
+						if( ! $user->has('roles', $role_iteration))
 						{
 							// Set the status false and get outta here
 							$status = FALSE;
@@ -58,11 +58,11 @@ class Auth_ORM extends Auth {
 					if ( ! is_object($role))
 					{
 						// Load the role
-						$role = ORM::factory('role', $role);
+						$role = ORM::factory('role', array('name', $role))->find();
 					}
 
 					// Check that the user has the given role
-					$status = $user->has($role);
+					$status = $user->has('roles', $role);
 				}
 			}
 		}
@@ -83,11 +83,11 @@ class Auth_ORM extends Auth {
 		if ( ! is_object($user))
 		{
 			// Load the user
-			$user = ORM::factory('user', $user);
+			$user = ORM::factory('user', array('username' => $user))->find();
 		}
 
 		// If the passwords match, perform a login
-		if ($user->has(ORM::factory('role', 'login')) AND $user->password === $password)
+		if ($user->has('roles', ORM::factory('role', array('name' => 'login'))) AND $user->password === $password)
 		{
 			if ($remember === TRUE)
 			{
@@ -144,11 +144,11 @@ class Auth_ORM extends Auth {
 		if ($token = cookie::get('authautologin'))
 		{
 			// Load the token and user
-			$token = ORM::factory('user_token', $token);
+			$token = ORM::factory('user_token', array('token' => $token))->find();
 
-			if ($token->loaded AND $token->user->loaded)
+			if ($token->loaded() AND $token->user->loaded())
 			{
-				if ($token->user_agent === sha1(Kohana::$user_agent))
+				if ($token->user_agent === sha1(Request::$user_agent))
 				{
 					// Save the token to create a new unique token
 					$token->save();
@@ -188,11 +188,11 @@ class Auth_ORM extends Auth {
 			// Clear the autologin token from the database
 			$token = ORM::factory('user_token', $token);
 			
-			if ($token->loaded AND $logout_all)
+			if ($token->loaded() AND $logout_all)
 			{
-				ORM::factory('user_token')->where('user_id', $token->user_id)->delete_all();
+				ORM::factory('user_token')->where('user_id', '=', $token->user_id)->delete_all();
 			}
-			elseif ($token->loaded)
+			elseif ($token->loaded())
 			{
 				$token->delete();
 			}
@@ -212,7 +212,7 @@ class Auth_ORM extends Auth {
 		if ( ! is_object($user))
 		{
 			// Load the user
-			$user = ORM::factory('user', $user);
+			$user = ORM::factory('user', array('username' => $user))->find();
 		}
 
 		return $user->password;
