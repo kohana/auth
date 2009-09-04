@@ -3,10 +3,13 @@
 class Model_Auth_User extends ORM {
 
 	// Relationships
-	protected $has_many = array('user_tokens');
-	protected $has_and_belongs_to_many = array('roles');
+	protected $_has_many = array
+		(
+			'user_tokens' => array('model' => 'user_token'),
+			'roles'				=> array('model' => 'role', 'through' => 'roles_users'),
+		);
 
-	protected $rules = array
+	protected $_rules = array
 	(
 		'username'			=> array
 		(
@@ -35,7 +38,7 @@ class Model_Auth_User extends ORM {
 	);
 
 	// Columns to ignore
-	protected $ignored_columns = array('password_confirm');
+	protected $_ignored_columns = array('password_confirm');
 
 	public function __set($key, $value)
 	{
@@ -46,28 +49,6 @@ class Model_Auth_User extends ORM {
 		}
 
 		parent::__set($key, $value);
-	}
-
-	/**
-	 * Validates and optionally saves a new user record from an array.
-	 *
-	 * @param  array    values to check
-	 * @param  boolean  save the record when validation succeeds
-	 * @param  array    errors
-	 * @return boolean
-	 */
-	public function validate(array & $array, $save = FALSE)
-	{
-		$array = Validate::factory($array)
-			->filter(TRUE, 'trim')
-			->rules('email', $this->rules['email'])
-			->callback('email', array($this, 'email_available'))
-			->rules('username', $this->rules['username'])
-			->callback('username', array($this, 'username_available'))
-			->rules('password', $this->rules['password'])
-			->rules('password_confirm', $this->rules['password_confirm']);
-
-		return parent::validate($array, $save);
 	}
 
 	/**
@@ -190,19 +171,6 @@ class Model_Auth_User extends ORM {
 						->where($this->unique_key($value), '=', $value)
 						->execute($this->db)
 						->get('total_count');
-	}
-
-	/**
-	 * Allows a model to be loaded by username or email address.
-	 */
-	public function unique_key($id)
-	{
-		if ( ! empty($id) AND is_string($id) AND ! ctype_digit($id))
-		{
-			return validate::email($id) ? 'email' : 'username';
-		}
-
-		return parent::unique_key($id);
 	}
 
 } // End Auth User Model
