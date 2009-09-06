@@ -9,12 +9,12 @@ class Model_Auth_Role extends ORM {
 		'name'		=> array
 		(
 			'not_empty'	=> NULL,
-			'min_length'	=> 4,
-			'max_length'	=> 32,
+			'min_length'	=> array(4),
+			'max_length'	=> array(32),
 		),
 		'description'	=> array
 		(
-			'max_length'	=> 255,
+			'max_length'	=> array(255),
 		),
 	);
 

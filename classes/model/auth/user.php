@@ -6,7 +6,7 @@ class Model_Auth_User extends ORM {
 	protected $_has_many = array
 		(
 			'user_tokens' => array('model' => 'user_token'),
-			'roles'				=> array('model' => 'role', 'through' => 'roles_users'),
+			'roles'       => array('model' => 'role', 'through' => 'roles_users'),
 		);
 
 	protected $_rules = array
@@ -63,8 +63,8 @@ class Model_Auth_User extends ORM {
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
-			->rules('username', $this->rules['username'])
-			->rules('password', $this->rules['password']);
+			->rules('username', $this->_rules['username'])
+			->rules('password', $this->_rules['password']);
 
 		// Login starts out invalid
 		$status = FALSE;
@@ -74,7 +74,7 @@ class Model_Auth_User extends ORM {
 			// Attempt to load the user
 			$this->find($array['username']);
 
-			if ($this->loaded AND Auth::instance()->login($this, $array['password']))
+			if ($this->loaded() AND Auth::instance()->login($this, $array['password']))
 			{
 				if (is_string($redirect))
 				{
@@ -105,8 +105,8 @@ class Model_Auth_User extends ORM {
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
-			->rules('password', $this->rules['password'])
-			->rules('password_confirm', $this->rules['password_confirm']);
+			->rules('password', $this->_rules['password'])
+			->rules('password_confirm', $this->_rules['password_confirm']);
 
 		if ($status = $array->check())
 		{
@@ -167,9 +167,9 @@ class Model_Auth_User extends ORM {
 	public function unique_key_exists($value)
 	{
 		return (bool) DB::select(array('COUNT("*")', 'total_count '))
-						->from($this->db->table_prefix().$this->table_name)
+						->from($this->_db->table_prefix().$this->_table_name)
 						->where($this->unique_key($value), '=', $value)
-						->execute($this->db)
+						->execute($this->_db)
 						->get('total_count');
 	}
 
