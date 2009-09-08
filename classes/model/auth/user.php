@@ -9,6 +9,7 @@ class Model_Auth_User extends ORM {
 			'roles'       => array('model' => 'role', 'through' => 'roles_users'),
 		);
 
+	// Rules
 	protected $_rules = array
 	(
 		'username'			=> array
@@ -39,17 +40,6 @@ class Model_Auth_User extends ORM {
 
 	// Columns to ignore
 	protected $_ignored_columns = array('password_confirm');
-
-	public function __set($key, $value)
-	{
-		if ($key === 'password')
-		{
-			// Use Auth to hash the password
-			$value = Auth::instance()->hash_password($value);
-		}
-
-		parent::__set($key, $value);
-	}
 
 	/**
 	 * Validates login information from an array, and optionally redirects
@@ -172,5 +162,21 @@ class Model_Auth_User extends ORM {
 						->execute($this->_db)
 						->get('total_count');
 	}
+
+        /**
+	 * Saves the current object. Will hash password if it was changed
+	 *
+	 * @chainable
+	 * @return  $this
+	 */
+        public function save()
+        {
+            if (array_key_exists('password', $this->_changed))
+            {
+                $this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
+            }
+
+            return parent::save();
+        }
 
 } // End Auth User Model
