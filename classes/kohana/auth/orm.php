@@ -41,7 +41,7 @@ class Kohana_Auth_ORM extends Auth {
 					{
 						if ( ! is_object($role_iteration))
 						{
-							$role_iteration = ORM::factory('role', array('name', $role_iteration))->find();
+							$role_iteration = ORM::factory('role', array('name' => $role_iteration));
 						}
 						// If the user doesn't have the role
 						if( ! $user->has('roles', $role_iteration))
@@ -58,7 +58,7 @@ class Kohana_Auth_ORM extends Auth {
 					if ( ! is_object($role))
 					{
 						// Load the role
-						$role = ORM::factory('role', array('name', $role))->find();
+						$role = ORM::factory('role', array('name' => $role));
 					}
 
 					// Check that the user has the given role
@@ -83,7 +83,7 @@ class Kohana_Auth_ORM extends Auth {
 		if ( ! is_object($user))
 		{
 			// Load the user
-			$user = ORM::factory('user', array('username' => $user))->find();
+			$user = ORM::factory('user', array('username' => $user));
 		}
 
 		// If the passwords match, perform a login
@@ -144,7 +144,7 @@ class Kohana_Auth_ORM extends Auth {
 		if ($token = cookie::get('authautologin'))
 		{
 			// Load the token and user
-			$token = ORM::factory('user_token', array('token' => $token))->find();
+			$token = ORM::factory('user_token', array('token' => $token));
 
 			if ($token->loaded() AND $token->user->loaded())
 			{
@@ -212,7 +212,7 @@ class Kohana_Auth_ORM extends Auth {
 		if ( ! is_object($user))
 		{
 			// Load the user
-			$user = ORM::factory('user', array('username' => $user))->find();
+			$user = ORM::factory('user', array('username' => $user));
 		}
 
 		return $user->password;
