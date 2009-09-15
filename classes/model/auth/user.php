@@ -62,14 +62,14 @@ class Model_Auth_User extends ORM {
 		if ($array->check())
 		{
 			// Attempt to load the user
-			$this->find($array['username']);
+			$this->where('username', '=', $array['username'])->find();
 
 			if ($this->loaded() AND Auth::instance()->login($this, $array['password']))
 			{
 				if (is_string($redirect))
 				{
 					// Redirect after a successful login
-					url::redirect($redirect);
+					Request::instance()->redirect($redirect);
 				}
 
 				// Login is successful
@@ -108,7 +108,7 @@ class Model_Auth_User extends ORM {
 				if (is_string($save))
 				{
 					// Redirect to the success page
-					url::redirect($save);
+					Request::instance()->redirect($save);
 				}
 			}
 		}
