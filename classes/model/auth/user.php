@@ -163,20 +163,31 @@ class Model_Auth_User extends ORM {
 						->get('total_count');
 	}
 
-        /**
+	/**
+	 * Allows a model use both email and username as unique identifiers for login
+	 *
+	 * @param  string    $value   unique value
+	 * @return string             field name
+	 */
+	public function unique_name($value)
+	{
+		return Validate::email($value) ? 'email' : 'username';
+	}
+
+  /**
 	 * Saves the current object. Will hash password if it was changed
 	 *
 	 * @chainable
 	 * @return  $this
 	 */
-        public function save()
-        {
-            if (array_key_exists('password', $this->_changed))
-            {
-                $this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
-            }
+	public function save()
+	{
+			if (array_key_exists('password', $this->_changed))
+			{
+					$this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
+			}
 
-            return parent::save();
-        }
+			return parent::save();
+	}
 
 } // End Auth User Model
