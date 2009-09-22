@@ -86,7 +86,7 @@ class Kohana_Auth_ORM extends Auth {
 
 			// Load the user
 			$user = ORM::factory('user');
-			$user->where($user->unique_name($username), "=", $username)->find();
+			$user->where($user->unique_key($username), "=", $username)->find();
 		}
 
 		// If the passwords match, perform a login
@@ -130,7 +130,7 @@ class Kohana_Auth_ORM extends Auth {
 
 			// Load the user
 			$user = ORM::factory('user');
-			$user->where($user->unique_name($username), "=", $username)->find();
+			$user->where($user->unique_key($username), "=", $username)->find();
 		}
 
 		// Mark the session as forced, to prevent users from changing account information
@@ -221,7 +221,7 @@ class Kohana_Auth_ORM extends Auth {
 
 			// Load the user
 			$user = ORM::factory('user');
-			$user->where($user->unique_name($username), "=", $username)->find();
+			$user->where($user->unique_key($username), "=", $username)->find();
 		}
 
 		return $user->password;

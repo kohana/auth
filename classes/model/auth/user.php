@@ -38,6 +38,12 @@ class Model_Auth_User extends ORM {
 		),
 	);
 
+	protected $_callbacks = array
+	(
+		'username'			=> array('username_available'),
+		'email'					=> array('email_available'),
+	);
+
 	// Columns to ignore
 	protected $_ignored_columns = array('password_confirm');
 
@@ -156,8 +162,8 @@ class Model_Auth_User extends ORM {
 	 */
 	public function unique_key_exists($value)
 	{
-		return (bool) DB::select(array('COUNT("*")', 'total_count '))
-						->from($this->_db->table_prefix().$this->_table_name)
+		return (bool) DB::select(array('COUNT("*")', 'total_count'))
+						->from($this->_table_name)
 						->where($this->unique_key($value), '=', $value)
 						->execute($this->_db)
 						->get('total_count');
@@ -169,7 +175,7 @@ class Model_Auth_User extends ORM {
 	 * @param  string    $value   unique value
 	 * @return string             field name
 	 */
-	public function unique_name($value)
+	public function unique_key($value)
 	{
 		return Validate::email($value) ? 'email' : 'username';
 	}
