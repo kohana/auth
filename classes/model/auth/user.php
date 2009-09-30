@@ -17,7 +17,7 @@ class Model_Auth_User extends ORM {
 			'not_empty'		=> NULL,
 			'min_length'		=> array(4),
 			'max_length'		=> array(32),
-			'regex'			=> array('![a-zA-Z0-9_.]!u'),
+			'regex'			=> array('/^[-\pL\pN_.]++$/uD'),
 		),
 		'password'			=> array
 		(
