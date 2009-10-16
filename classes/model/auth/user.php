@@ -17,7 +17,7 @@ class Model_Auth_User extends ORM {
 			'not_empty'		=> NULL,
 			'min_length'		=> array(4),
 			'max_length'		=> array(32),
-			'regex'			=> array('![a-zA-Z0-9_.]!u'),
+			'regex'			=> array('/^[-\pL\pN_.]++$/uD'),
 		),
 		'password'			=> array
 		(
@@ -36,6 +36,12 @@ class Model_Auth_User extends ORM {
 			'max_length'		=> array(127),
 			'validate::email'	=> NULL,
 		),
+	);
+
+	protected $_callbacks = array
+	(
+		'username'			=> array('username_available'),
+		'email'					=> array('email_available'),
 	);
 
 	// Columns to ignore
@@ -156,27 +162,38 @@ class Model_Auth_User extends ORM {
 	 */
 	public function unique_key_exists($value)
 	{
-		return (bool) DB::select(array('COUNT("*")', 'total_count '))
-						->from($this->_db->table_prefix().$this->_table_name)
+		return (bool) DB::select(array('COUNT("*")', 'total_count'))
+						->from($this->_table_name)
 						->where($this->unique_key($value), '=', $value)
 						->execute($this->_db)
 						->get('total_count');
 	}
 
-        /**
+	/**
+	 * Allows a model use both email and username as unique identifiers for login
+	 *
+	 * @param  string    $value   unique value
+	 * @return string             field name
+	 */
+	public function unique_key($value)
+	{
+		return Validate::email($value) ? 'email' : 'username';
+	}
+
+  /**
 	 * Saves the current object. Will hash password if it was changed
 	 *
 	 * @chainable
 	 * @return  $this
 	 */
-        public function save()
-        {
-            if (array_key_exists('password', $this->_changed))
-            {
-                $this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
-            }
+	public function save()
+	{
+			if (array_key_exists('password', $this->_changed))
+			{
+					$this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
+			}
 
-            return parent::save();
-        }
+			return parent::save();
+	}
 
 } // End Auth User Model
