@@ -192,7 +192,7 @@ class Kohana_Auth_ORM extends Auth {
 			cookie::delete('authautologin');
 			
 			// Clear the autologin token from the database
-			$token = ORM::factory('user_token', $token);
+			$token = ORM::factory('user_token', array('token' => $token));
 			
 			if ($token->loaded() AND $logout_all)
 			{
