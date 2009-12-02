@@ -13,6 +13,11 @@ abstract class Kohana_Auth {
 	// Auth instances
 	protected static $instance;
 
+	/**
+	 * Singleton pattern
+	 *
+	 * @return Auth
+	 */
 	public static function instance()
 	{
 		if ( ! isset(Auth::$instance))
@@ -38,7 +43,7 @@ abstract class Kohana_Auth {
 	/**
 	 * Create an instance of Auth.
 	 *
-	 * @return  object
+	 * @return  Auth
 	 */
 	public static function factory($config = array())
 	{
@@ -62,7 +67,7 @@ abstract class Kohana_Auth {
 		// Save the config in the object
 		$this->config = $config;
 
-        $this->session = Session::instance();
+		$this->session = Session::instance();
 	}
 
 	abstract protected function _login($username, $password, $remember);
@@ -122,7 +127,7 @@ abstract class Kohana_Auth {
 		if ($destroy === TRUE)
 		{
 			// Destroy the session completely
-			Session::instance()->destroy();
+			$this->session->destroy();
 		}
 		else
 		{
@@ -231,7 +236,7 @@ abstract class Kohana_Auth {
 		$this->session->regenerate();
 
 		// Store username in session
-		$_SESSION[$this->config['session_key']] = $user;
+		$this->session->set($this->config['session_key'], $user);
 
 		return TRUE;
 	}
