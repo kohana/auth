@@ -133,8 +133,8 @@ class Kohana_Auth_ORM extends Auth {
 			$user->where($user->unique_key($username), "=", $username)->find();
 		}
 
-		// Mark the session as forced, to prevent users from changing account information
-		$_SESSION['auth_forced'] = TRUE;
+		// Mark the session as forced, to prevent users from changing account information		
+		$this->session->set('auth_forced', TRUE);
 
 		// Run the standard completion
 		$this->complete_login($user);
