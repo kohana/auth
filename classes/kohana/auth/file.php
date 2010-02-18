@@ -18,7 +18,7 @@ class Kohana_Auth_File extends Auth {
 	/**
 	 * Constructor loads the user list into the class.
 	 */
-	public function __construct(array $config)
+	public function __construct(Kohana_Config_Reader $config)
 	{
 		parent::__construct($config);
 
