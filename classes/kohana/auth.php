@@ -151,7 +151,7 @@ abstract class Kohana_Auth {
 	 */
 	public function logged_in($role = NULL)
 	{
-		return ($this->session->get($this->config['session_key'], FALSE) !== FALSE);
+		return (bool) $this->session->get($this->config['session_key'], FALSE);
 	}
 
 	/**
