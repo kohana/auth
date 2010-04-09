@@ -1,9 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 /**
  * File Auth driver.
- * Note: this Auth driver does not support roles nor auto-login.
- *
- * $Id: File.php 3769 2008-12-15 00:48:56Z zombor $
+ * Note: this Auth driver does not support roles nor autologin.
  *
  * @package    Auth
  * @author     Kohana Team
@@ -31,10 +29,10 @@ class Kohana_Auth_File extends Auth {
 	 *
 	 * @param   string   username
 	 * @param   string   password
-	 * @param   boolean  enable auto-login (not supported)
+	 * @param   boolean  enable autologin (not supported)
 	 * @return  boolean
 	 */
-	public function _login($username, $password, $remember)
+	protected function _login($username, $password, $remember)
 	{
 		if (isset($this->users[$username]) AND $this->users[$username] === $password)
 		{
@@ -69,4 +67,4 @@ class Kohana_Auth_File extends Auth {
 		return isset($this->users[$username]) ? $this->users[$username] : FALSE;
 	}
 
-} // End Auth_File_Driver
+} // End Auth File

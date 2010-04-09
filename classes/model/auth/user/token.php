@@ -10,6 +10,8 @@ class Model_Auth_User_Token extends ORM {
 
 	/**
 	 * Handles garbage collection and deleting of expired objects.
+	 *
+	 * @return  void
 	 */
 	public function __construct($id = NULL)
 	{
@@ -34,6 +36,8 @@ class Model_Auth_User_Token extends ORM {
 	/**
 	 * Overload saving to set the created time and to create a new token
 	 * when the object is saved.
+	 *
+	 * @return  ORM
 	 */
 	public function save()
 	{
@@ -53,7 +57,7 @@ class Model_Auth_User_Token extends ORM {
 	/**
 	 * Deletes all expired tokens.
 	 *
-	 * @return  void
+	 * @return  ORM
 	 */
 	public function delete_expired()
 	{

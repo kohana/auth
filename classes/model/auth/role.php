@@ -6,15 +6,15 @@ class Model_Auth_Role extends ORM {
 
 	protected $_rules = array
 	(
-		'name'		=> array
+		'name' => array
 		(
-			'not_empty'	=> NULL,
-			'min_length'	=> array(4),
-			'max_length'	=> array(32),
+			'not_empty'  => NULL,
+			'min_length' => array(4),
+			'max_length' => array(32),
 		),
-		'description'	=> array
+		'description' => array
 		(
-			'max_length'	=> array(255),
+			'max_length' => array(255),
 		),
 	);
 

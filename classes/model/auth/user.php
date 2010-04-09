@@ -3,45 +3,39 @@
 class Model_Auth_User extends ORM {
 
 	// Relationships
-	protected $_has_many = array
-		(
-			'user_tokens' => array('model' => 'user_token'),
-			'roles'       => array('model' => 'role', 'through' => 'roles_users'),
-		);
+	protected $_has_many = array(
+		'user_tokens' => array('model' => 'user_token'),
+		'roles'       => array('model' => 'role', 'through' => 'roles_users'),
+	);
 
-	// Rules
-	protected $_rules = array
-	(
-		'username'			=> array
-		(
-			'not_empty'		=> NULL,
-			'min_length'		=> array(4),
-			'max_length'		=> array(32),
-			'regex'			=> array('/^[-\pL\pN_.]++$/uD'),
+	// Validation rules
+	protected $_rules = array(
+		'username' => array(
+			'not_empty'  => NULL,
+			'min_length' => array(4),
+			'max_length' => array(32),
+			'regex'      => array('/^[-\pL\pN_.]++$/uD'),
 		),
-		'password'			=> array
-		(
-			'not_empty'		=> NULL,
-			'min_length'		=> array(5),
-			'max_length'		=> array(42),
+		'password' => array(
+			'not_empty'  => NULL,
+			'min_length' => array(5),
+			'max_length' => array(42),
 		),
-		'password_confirm'	=> array
-		(
-			'matches'		=> array('password'),
+		'password_confirm' => array(
+			'matches'    => array('password'),
 		),
-		'email'				=> array
-		(
-			'not_empty'		=> NULL,
-			'min_length'		=> array(4),
-			'max_length'		=> array(127),
-			'validate::email'	=> NULL,
+		'email' => array(
+			'not_empty'  => NULL,
+			'min_length' => array(4),
+			'max_length' => array(127),
+			'email'      => NULL,
 		),
 	);
 
-	protected $_callbacks = array
-	(
-		'username'			=> array('username_available'),
-		'email'					=> array('email_available'),
+	// Validation callbacks
+	protected $_callbacks = array(
+		'username' => array('username_available'),
+		'email' => array('email_available'),
 	);
 
 	// Columns to ignore
@@ -51,9 +45,9 @@ class Model_Auth_User extends ORM {
 	 * Validates login information from an array, and optionally redirects
 	 * after a successful login.
 	 *
-	 * @param  array    values to check
-	 * @param  string   URI or URL to redirect to
-	 * @return boolean
+	 * @param   array    values to check
+	 * @param   string   URI or URL to redirect to
+	 * @return  boolean
 	 */
 	public function login(array & $array, $redirect = FALSE)
 	{
@@ -93,9 +87,9 @@ class Model_Auth_User extends ORM {
 	/**
 	 * Validates an array for a matching password and password_confirm field.
 	 *
-	 * @param  array    values to check
-	 * @param  string   save the user if
-	 * @return boolean
+	 * @param   array    values to check
+	 * @param   string   save the user if
+	 * @return  boolean
 	 */
 	public function change_password(array & $array, $save = FALSE)
 	{
@@ -123,77 +117,76 @@ class Model_Auth_User extends ORM {
 	}
 
 	/**
-	 * Does the reverse of unique_key_exists() by triggering error if username exists
-	 * Validation Rule
+	 * Does the reverse of unique_key_exists() by triggering error if username exists.
+	 * Validation callback.
 	 *
-	 * @param    Validate  $array   validate object
-	 * @param    string    $field   field name
-	 * @param    array     $errors  current validation errors
-	 * @return   array
+	 * @param   Validate  Validate object
+	 * @param   string    field name
+	 * @return  void
 	 */
 	public function username_available(Validate $array, $field)
 	{
-		if ($this->unique_key_exists($array[$field])) {
+		if ($this->unique_key_exists($array[$field]))
+		{
 			$array->error($field, 'username_available', array($array[$field]));
 		}
 	}
 
 	/**
-	 * Does the reverse of unique_key_exists() by triggering error if email exists
-	 * Validation Rule
+	 * Does the reverse of unique_key_exists() by triggering error if email exists.
+	 * Validation callback.
 	 *
-	 * @param    Validate  $array   validate object
-	 * @param    string    $field   field name
-	 * @param    array     $errors  current validation errors
-	 * @return   array
+	 * @param   Validate  Validate object
+	 * @param   string    field name
+	 * @return  void
 	 */
 	public function email_available(Validate $array, $field)
 	{
-		if ($this->unique_key_exists($array[$field])) {
+		if ($this->unique_key_exists($array[$field]))
+		{
 			$array->error($field, 'email_available', array($array[$field]));
 		}
 	}
 
 	/**
-	 * Tests if a unique key value exists in the database
+	 * Tests if a unique key value exists in the database.
 	 *
-	 * @param   mixed        value  the value to test
+	 * @param   mixed    the value to test
 	 * @return  boolean
 	 */
 	public function unique_key_exists($value)
 	{
 		return (bool) DB::select(array('COUNT("*")', 'total_count'))
-						->from($this->_table_name)
-						->where($this->unique_key($value), '=', $value)
-						->execute($this->_db)
-						->get('total_count');
+			->from($this->_table_name)
+			->where($this->unique_key($value), '=', $value)
+			->execute($this->_db)
+			->get('total_count');
 	}
 
 	/**
 	 * Allows a model use both email and username as unique identifiers for login
 	 *
-	 * @param  string    $value   unique value
-	 * @return string             field name
+	 * @param   string  unique value
+	 * @return  string  field name
 	 */
 	public function unique_key($value)
 	{
 		return Validate::email($value) ? 'email' : 'username';
 	}
 
-  /**
-	 * Saves the current object. Will hash password if it was changed
+	/**
+	 * Saves the current object. Will hash password if it was changed.
 	 *
-	 * @chainable
-	 * @return  $this
+	 * @return  ORM
 	 */
 	public function save()
 	{
-			if (array_key_exists('password', $this->_changed))
-			{
-					$this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
-			}
+		if (array_key_exists('password', $this->_changed))
+		{
+			$this->_object['password'] = Auth::instance()->hash_password($this->_object['password']);
+		}
 
-			return parent::save();
+		return parent::save();
 	}
 
 } // End Auth User Model

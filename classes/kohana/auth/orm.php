@@ -2,8 +2,6 @@
 /**
  * ORM Auth driver.
  *
- * $Id: ORM.php 4335 2009-05-06 23:46:02Z kiall $
- *
  * @package    Auth
  * @author     Kohana Team
  * @copyright  (c) 2007-2008 Kohana Team
@@ -14,8 +12,7 @@ class Kohana_Auth_ORM extends Auth {
 	/**
 	 * Checks if a session is active.
 	 *
-	 * @param   string   role name
-	 * @param   array    collection of role names
+	 * @param   mixed    role name string, role ORM object, or array with role names
 	 * @return  boolean
 	 */
 	public function logged_in($role = NULL)
@@ -32,19 +29,19 @@ class Kohana_Auth_ORM extends Auth {
 
 			if ( ! empty($role))
 			{
-
-				// If role is an array
+				// Multiple roles to check
 				if (is_array($role))
 				{
 					// Check each role
-					foreach ($role as $role_iteration)
+					foreach ($role as $_role)
 					{
-						if ( ! is_object($role_iteration))
+						if ( ! is_object($_role))
 						{
-							$role_iteration = ORM::factory('role', array('name' => $role_iteration));
+							$_role = ORM::factory('role', array('name' => $_role));
 						}
+
 						// If the user doesn't have the role
-						if( ! $user->has('roles', $role_iteration))
+						if ( ! $user->has('roles', $_role))
 						{
 							// Set the status false and get outta here
 							$status = FALSE;
@@ -52,9 +49,9 @@ class Kohana_Auth_ORM extends Auth {
 						}
 					}
 				}
+				// Single role to check
 				else
 				{
-				// Else just check the one supplied roles
 					if ( ! is_object($role))
 					{
 						// Load the role
@@ -75,10 +72,10 @@ class Kohana_Auth_ORM extends Auth {
 	 *
 	 * @param   string   username
 	 * @param   string   password
-	 * @param   boolean  enable auto-login
+	 * @param   boolean  enable autologin
 	 * @return  boolean
 	 */
-	public function _login($user, $password, $remember)
+	protected function _login($user, $password, $remember)
 	{
 		if ( ! is_object($user))
 		{
@@ -86,7 +83,7 @@ class Kohana_Auth_ORM extends Auth {
 
 			// Load the user
 			$user = ORM::factory('user');
-			$user->where($user->unique_key($username), "=", $username)->find();
+			$user->where($user->unique_key($username), '=', $username)->find();
 		}
 
 		// If the passwords match, perform a login
@@ -103,7 +100,7 @@ class Kohana_Auth_ORM extends Auth {
 				$token->save();
 
 				// Set the autologin cookie
-				cookie::set('authautologin', $token->token, $this->config['lifetime']);
+				Cookie::set('authautologin', $token->token, $this->config['lifetime']);
 			}
 
 			// Finish the login
@@ -119,7 +116,7 @@ class Kohana_Auth_ORM extends Auth {
 	/**
 	 * Forces a user to be logged in, without specifying a password.
 	 *
-	 * @param   mixed    username
+	 * @param   mixed    username string, or user ORM object
 	 * @return  boolean
 	 */
 	public function force_login($user)
@@ -130,10 +127,10 @@ class Kohana_Auth_ORM extends Auth {
 
 			// Load the user
 			$user = ORM::factory('user');
-			$user->where($user->unique_key($username), "=", $username)->find();
+			$user->where($user->unique_key($username), '=', $username)->find();
 		}
 
-		// Mark the session as forced, to prevent users from changing account information		
+		// Mark the session as forced, to prevent users from changing account information
 		$this->session->set('auth_forced', TRUE);
 
 		// Run the standard completion
@@ -147,7 +144,7 @@ class Kohana_Auth_ORM extends Auth {
 	 */
 	public function auto_login()
 	{
-		if ($token = cookie::get('authautologin'))
+		if ($token = Cookie::get('authautologin'))
 		{
 			// Load the token and user
 			$token = ORM::factory('user_token', array('token' => $token));
@@ -160,7 +157,7 @@ class Kohana_Auth_ORM extends Auth {
 					$token->save();
 
 					// Set the new token
-					cookie::set('authautologin', $token->token, $token->expires - time());
+					Cookie::set('authautologin', $token->token, $token->expires - time());
 
 					// Complete the login with the found data
 					$this->complete_login($token->user);
@@ -178,7 +175,7 @@ class Kohana_Auth_ORM extends Auth {
 	}
 
 	/**
-	 * Log a user out and remove any auto-login cookies.
+	 * Log a user out and remove any autologin cookies.
 	 *
 	 * @param   boolean  completely destroy the session
 	 * @param	boolean  remove all tokens for user
@@ -186,14 +183,14 @@ class Kohana_Auth_ORM extends Auth {
 	 */
 	public function logout($destroy = FALSE, $logout_all = FALSE)
 	{
-		if ($token = cookie::get('authautologin'))
+		if ($token = Cookie::get('authautologin'))
 		{
 			// Delete the autologin cookie to prevent re-login
-			cookie::delete('authautologin');
-			
+			Cookie::delete('authautologin');
+
 			// Clear the autologin token from the database
 			$token = ORM::factory('user_token', array('token' => $token));
-			
+
 			if ($token->loaded() AND $logout_all)
 			{
 				ORM::factory('user_token')->where('user_id', '=', $token->user_id)->delete_all();
@@ -210,7 +207,7 @@ class Kohana_Auth_ORM extends Auth {
 	/**
 	 * Get the stored password for a username.
 	 *
-	 * @param   mixed   username
+	 * @param   mixed   username string, or user ORM object
 	 * @return  string
 	 */
 	public function password($user)
@@ -221,7 +218,7 @@ class Kohana_Auth_ORM extends Auth {
 
 			// Load the user
 			$user = ORM::factory('user');
-			$user->where($user->unique_key($username), "=", $username)->find();
+			$user->where($user->unique_key($username), '=', $username)->find();
 		}
 
 		return $user->password;
@@ -229,9 +226,9 @@ class Kohana_Auth_ORM extends Auth {
 
 	/**
 	 * Complete the login for a user by incrementing the logins and setting
-	 * session data: user_id, username, roles
+	 * session data: user_id, username, roles.
 	 *
-	 * @param   object   user model object
+	 * @param   object  user ORM object
 	 * @return  void
 	 */
 	protected function complete_login($user)
@@ -248,4 +245,4 @@ class Kohana_Auth_ORM extends Auth {
 		return parent::complete_login($user);
 	}
 
-} // End Auth_ORM_Driver
+} // End Auth ORM
