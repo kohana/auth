@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php defined('SYSPATH') or die('No direct access allowed.');
 
 class Model_Auth_User extends ORM {
 
@@ -85,13 +85,14 @@ class Model_Auth_User extends ORM {
 	}
 
 	/**
-	 * Validates an array for a matching password and password_confirm field.
+	 * Validates an array for a matching password and password_confirm field,
+	 * and optionally redirects after a successful save.
 	 *
 	 * @param   array    values to check
-	 * @param   string   save the user if
+	 * @param   string   URI or URL to redirect to
 	 * @return  boolean
 	 */
-	public function change_password(array & $array, $save = FALSE)
+	public function change_password(array & $array, $redirect = FALSE)
 	{
 		$array = Validate::factory($array)
 			->filter(TRUE, 'trim')
@@ -103,13 +104,10 @@ class Model_Auth_User extends ORM {
 			// Change the password
 			$this->password = $array['password'];
 
-			if ($save !== FALSE AND $status = $this->save())
+			if ($status = $this->save() AND is_string($redirect))
 			{
-				if (is_string($save))
-				{
-					// Redirect to the success page
-					Request::instance()->redirect($save);
-				}
+				// Redirect to the success page
+				Request::instance()->redirect($redirect);
 			}
 		}
 
