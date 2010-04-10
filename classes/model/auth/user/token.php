@@ -81,7 +81,7 @@ class Model_Auth_User_Token extends ORM {
 		while (TRUE)
 		{
 			// Create a random token
-			$token = text::random('alnum', 32);
+			$token = Text::random('alnum', 32);
 
 			// Make sure the token does not already exist
 			$count = DB::select('id')
@@ -89,6 +89,7 @@ class Model_Auth_User_Token extends ORM {
 				->from($this->_table_name)
 				->execute($this->_db)
 				->count();
+
 			if ($count === 0)
 			{
 				// A unique token has been found
