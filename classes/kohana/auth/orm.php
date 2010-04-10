@@ -183,6 +183,9 @@ class Kohana_Auth_ORM extends Auth {
 	 */
 	public function logout($destroy = FALSE, $logout_all = FALSE)
 	{
+		// Set by force_login()
+		$this->session->delete('auth_forced');
+
 		if ($token = Cookie::get('authautologin'))
 		{
 			// Delete the autologin cookie to prevent re-login
