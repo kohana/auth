@@ -10,6 +10,8 @@ class Model_Auth_User_Token extends ORM {
 
 	/**
 	 * Handles garbage collection and deleting of expired objects.
+	 *
+	 * @return  void
 	 */
 	public function __construct($id = NULL)
 	{
@@ -34,6 +36,8 @@ class Model_Auth_User_Token extends ORM {
 	/**
 	 * Overload saving to set the created time and to create a new token
 	 * when the object is saved.
+	 *
+	 * @return  ORM
 	 */
 	public function save()
 	{
@@ -53,7 +57,7 @@ class Model_Auth_User_Token extends ORM {
 	/**
 	 * Deletes all expired tokens.
 	 *
-	 * @return  void
+	 * @return  ORM
 	 */
 	public function delete_expired()
 	{
@@ -77,7 +81,7 @@ class Model_Auth_User_Token extends ORM {
 		while (TRUE)
 		{
 			// Create a random token
-			$token = text::random('alnum', 32);
+			$token = Text::random('alnum', 32);
 
 			// Make sure the token does not already exist
 			$count = DB::select('id')
@@ -85,6 +89,7 @@ class Model_Auth_User_Token extends ORM {
 				->from($this->_table_name)
 				->execute($this->_db)
 				->count();
+
 			if ($count === 0)
 			{
 				// A unique token has been found
