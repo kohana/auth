@@ -21,7 +21,7 @@ class Kohana_Auth_File extends Auth {
 		parent::__construct($config);
 
 		// Load user list
-		$this->_users = empty($config['users']) ? array() : $config['users'];
+		$this->_users = arr::get($config, 'users', array());
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Kohana_Auth_File extends Auth {
 	 */
 	public function password($username)
 	{
-		return isset($this->_users[$username]) ? $this->_users[$username] : FALSE;
+		return arr::get($this->_users, $username, FALSE);
 	}
 
 } // End Auth File
