@@ -139,14 +139,14 @@ abstract class Kohana_Auth {
 
 	/**
 	 * Check if there is an active session. Optionally allows checking for a
-	 * specific role. Returns FALSE or ORM object
+	 * specific role. 
 	 *
 	 * @param   string   role name
 	 * @return  mixed
 	 */
 	public function logged_in($role = NULL)
 	{
-		return $this->get_user();
+		return FALSE !== $this->get_user();
 	}
 
 	/**
