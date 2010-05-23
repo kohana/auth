@@ -20,7 +20,7 @@ class Kohana_Auth_ORM extends Auth {
 		$status = FALSE;
 
 		// Get the user from the session
-		$user = $this->_session->get($this->_config['session_key']);
+		$user = $this->get_user();
 
 		if (is_object($user) AND $user instanceof Model_User AND $user->loaded())
 		{
@@ -140,7 +140,7 @@ class Kohana_Auth_ORM extends Auth {
 	/**
 	 * Logs a user in, based on the authautologin cookie.
 	 *
-	 * @return  boolean
+	 * @return  mixed
 	 */
 	public function auto_login()
 	{
@@ -163,7 +163,7 @@ class Kohana_Auth_ORM extends Auth {
 					$this->complete_login($token->user);
 
 					// Automatic login was successful
-					return TRUE;
+					return $token->user;
 				}
 
 				// Token is invalid
@@ -172,6 +172,25 @@ class Kohana_Auth_ORM extends Auth {
 		}
 
 		return FALSE;
+	}
+
+	/**
+	 * Gets the currently logged in user from the session (with auto_login check).
+	 * Returns FALSE if no user is currently logged in.
+	 *
+	 * @return  mixed
+	 */
+	public function get_user()
+	{
+		$user = parent::get_user();
+
+		if ($user === FALSE)
+		{
+			// check for "remembered" login
+			$user = $this->auto_login();
+		}
+
+		return $user;
 	}
 
 	/**

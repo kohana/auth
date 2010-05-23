@@ -82,12 +82,7 @@ abstract class Kohana_Auth {
 	 */
 	public function get_user()
 	{
-		if ($this->logged_in())
-		{
-			return $this->_session->get($this->_config['session_key']);
-		}
-
-		return FALSE;
+		return $this->_session->get($this->_config['session_key'], FALSE);
 	}
 
 	/**
@@ -144,14 +139,14 @@ abstract class Kohana_Auth {
 
 	/**
 	 * Check if there is an active session. Optionally allows checking for a
-	 * specific role.
+	 * specific role. Returns FALSE or ORM object
 	 *
 	 * @param   string   role name
-	 * @return  boolean
+	 * @return  mixed
 	 */
 	public function logged_in($role = NULL)
 	{
-		return (bool) $this->_session->get($this->_config['session_key'], FALSE);
+		return $this->get_user();
 	}
 
 	/**
