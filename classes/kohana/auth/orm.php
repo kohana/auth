@@ -20,7 +20,7 @@ class Kohana_Auth_ORM extends Auth {
 		$status = FALSE;
 
 		// Get the user from the session
-		$user = $this->session->get($this->config['session_key']);
+		$user = $this->_session->get($this->_config['session_key']);
 
 		if (is_object($user) AND $user instanceof Model_User AND $user->loaded())
 		{
@@ -96,11 +96,11 @@ class Kohana_Auth_ORM extends Auth {
 
 				// Set token data
 				$token->user_id = $user->id;
-				$token->expires = time() + $this->config['lifetime'];
+				$token->expires = time() + $this->_config['lifetime'];
 				$token->save();
 
 				// Set the autologin cookie
-				Cookie::set('authautologin', $token->token, $this->config['lifetime']);
+				Cookie::set('authautologin', $token->token, $this->_config['lifetime']);
 			}
 
 			// Finish the login
@@ -131,7 +131,7 @@ class Kohana_Auth_ORM extends Auth {
 		}
 
 		// Mark the session as forced, to prevent users from changing account information
-		$this->session->set('auth_forced', TRUE);
+		$this->_session->set('auth_forced', TRUE);
 
 		// Run the standard completion
 		$this->complete_login($user);
@@ -184,7 +184,7 @@ class Kohana_Auth_ORM extends Auth {
 	public function logout($destroy = FALSE, $logout_all = FALSE)
 	{
 		// Set by force_login()
-		$this->session->delete('auth_forced');
+		$this->_session->delete('auth_forced');
 
 		if ($token = Cookie::get('authautologin'))
 		{
