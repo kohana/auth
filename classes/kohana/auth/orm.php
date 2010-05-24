@@ -255,14 +255,7 @@ class Kohana_Auth_ORM extends Auth {
 	 */
 	protected function complete_login($user)
 	{
-		// Update the number of logins
-		$user->logins += 1;
-
-		// Set the last login date
-		$user->last_login = time();
-
-		// Save the user
-		$user->save();
+		$user->complete_login();
 
 		return parent::complete_login($user);
 	}

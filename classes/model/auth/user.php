@@ -115,6 +115,29 @@ class Model_Auth_User extends ORM {
 	}
 
 	/**
+	 * Complete the login for a user by incrementing the logins and saving login timestamp
+	 *
+	 * @return void 
+	 */
+	public function complete_login()
+	{
+		if ( ! $this->_loaded)
+		{
+			// nothing to do
+			return;
+		}
+
+		// Update the number of logins
+		$this->logins += 1;
+
+		// Set the last login date
+		$this->last_login = time();
+
+		// Save the user
+		$this->save();
+	}
+
+	/**
 	 * Does the reverse of unique_key_exists() by triggering error if username exists.
 	 * Validation callback.
 	 *
