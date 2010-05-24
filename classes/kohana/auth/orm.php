@@ -260,4 +260,25 @@ class Kohana_Auth_ORM extends Auth {
 		return parent::complete_login($user);
 	}
 
+	/**
+	 * Compare password with original (hashed). Works for current (logged in) user
+	 *
+	 * @param   string  $password
+	 * @return  boolean
+	 */
+	public function check_password($password)
+	{
+		$user = $this->get_user();
+
+		if ($user === FALSE)
+		{
+			// nothing to compare
+			return FALSE;
+		}
+
+		$hash = $this->hash_password($password, $this->find_salt($user->password));
+
+		return $hash == $user->password;
+	}
+
 } // End Auth ORM

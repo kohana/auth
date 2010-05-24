@@ -74,6 +74,8 @@ abstract class Kohana_Auth {
 
 	abstract public function password($username);
 
+	abstract public function check_password($password);
+
 	/**
 	 * Gets the currently logged in user from the session.
 	 * Returns FALSE if no user is currently logged in.

@@ -67,4 +67,22 @@ class Kohana_Auth_File extends Auth {
 		return arr::get($this->_users, $username, FALSE);
 	}
 
+	/**
+	 * Compare password with original (plain text). Works for current (logged in) user
+	 *
+	 * @param   string  $password
+	 * @return  boolean
+	 */
+	public function check_password($password)
+	{
+		$username = $this->get_user();
+
+		if ($username === FALSE)
+		{
+			return FALSE;
+		}
+
+		return ($password === $this->password($username));
+	}
+
 } // End Auth File
