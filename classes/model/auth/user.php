@@ -180,6 +180,7 @@ class Model_Auth_User extends ORM {
 		return (bool) DB::select(array('COUNT("*")', 'total_count'))
 			->from($this->_table_name)
 			->where($this->unique_key($value), '=', $value)
+			->where($this->_primary_key, '!=', $this->pk())
 			->execute($this->_db)
 			->get('total_count');
 	}
