@@ -56,6 +56,9 @@ class Model_Auth_User extends ORM {
 			->rules('username', $this->_rules['username'])
 			->rules('password', $this->_rules['password']);
 
+		// Get the remember login option
+		$remember = isset($array['remember']);
+
 		// Login starts out invalid
 		$status = FALSE;
 
@@ -64,7 +67,7 @@ class Model_Auth_User extends ORM {
 			// Attempt to load the user
 			$this->where('username', '=', $array['username'])->find();
 
-			if ($this->loaded() AND Auth::instance()->login($this, $array['password']))
+			if ($this->loaded() AND Auth::instance()->login($this, $array['password'], $remember))
 			{
 				if (is_string($redirect))
 				{
