@@ -38,6 +38,14 @@ class Model_Auth_User extends ORM {
 		'email' => array('email_available'),
 	);
 
+	// Field labels
+	protected $_labels = array(
+		'username'         => 'username',
+		'email'            => 'email address',
+		'password'         => 'password',
+		'password_confirm' => 'password confirmation',
+	);
+
 	// Columns to ignore
 	protected $_ignored_columns = array('password_confirm');
 
@@ -52,6 +60,8 @@ class Model_Auth_User extends ORM {
 	public function login(array & $array, $redirect = FALSE)
 	{
 		$array = Validate::factory($array)
+			->label('username', $this->_labels['username'])
+			->label('password', $this->_labels['password'])
 			->filter(TRUE, 'trim')
 			->rules('username', $this->_rules['username'])
 			->rules('password', $this->_rules['password']);
@@ -98,6 +108,8 @@ class Model_Auth_User extends ORM {
 	public function change_password(array & $array, $redirect = FALSE)
 	{
 		$array = Validate::factory($array)
+			->label('password', $this->_labels['password'])
+			->label('password_confirm', $this->_labels['password_confirm'])
 			->filter(TRUE, 'trim')
 			->rules('password', $this->_rules['password'])
 			->rules('password_confirm', $this->_rules['password_confirm']);
