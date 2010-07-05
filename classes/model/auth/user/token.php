@@ -50,24 +50,18 @@ class Model_Auth_User_Token extends ORM {
 
 		while (TRUE)
 		{
+			// Generate a new token
+			$this->token = $this->create_token();
+
 			try
 			{
-				// Generate a new token
-				$this->token = $this->create_token();
-
-				// If a collision occurs an exception will be thrown
-				$status = parent::save();
-
-				// Sucessfully created token
-				break;
+				return parent::save();
 			}
 			catch (Kohana_Database_Exception $e)
 			{
 				// Collision occurred, token is not unique
 			}
 		}
-
-		return $status;
 	}
 
 	/**
