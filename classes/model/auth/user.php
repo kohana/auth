@@ -162,7 +162,7 @@ class Model_Auth_User extends ORM {
 	 */
 	public function username_available(Validate $array, $field)
 	{
-		if ($this->unique_key_exists($array[$field]))
+		if ($this->unique_key_exists($array[$field], 'username'))
 		{
 			$array->error($field, 'username_available', array($array[$field]));
 		}
@@ -178,7 +178,7 @@ class Model_Auth_User extends ORM {
 	 */
 	public function email_available(Validate $array, $field)
 	{
-		if ($this->unique_key_exists($array[$field]))
+		if ($this->unique_key_exists($array[$field], 'email'))
 		{
 			$array->error($field, 'email_available', array($array[$field]));
 		}
@@ -188,13 +188,20 @@ class Model_Auth_User extends ORM {
 	 * Tests if a unique key value exists in the database.
 	 *
 	 * @param   mixed    the value to test
+	 * @param   string   field name
 	 * @return  boolean
 	 */
-	public function unique_key_exists($value)
+	public function unique_key_exists($value, $field = NULL)
 	{
+		if ($field === NULL)
+		{
+			// Automatically determine field by looking at the value
+			$field = $this->unique_key($value);
+		}
+
 		return (bool) DB::select(array('COUNT("*")', 'total_count'))
 			->from($this->_table_name)
-			->where($this->unique_key($value), '=', $value)
+			->where($field, '=', $value)
 			->where($this->_primary_key, '!=', $this->pk())
 			->execute($this->_db)
 			->get('total_count');
