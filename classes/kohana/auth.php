@@ -61,9 +61,6 @@ abstract class Kohana_Auth {
 	 */
 	public function __construct($config = array())
 	{
-		// Clean up the salt pattern and split it into an array
-		$config['salt_pattern'] = preg_split('/,\s*/', Kohana::config('auth')->get('salt_pattern'));
-
 		// Save the config in the object
 		$this->_config = $config;
 
@@ -102,11 +99,8 @@ abstract class Kohana_Auth {
 
 		if (is_string($password))
 		{
-			// Get the salt from the stored password
-			$salt = $this->find_salt($this->password($username));
-
-			// Create a hashed password using the salt from the stored password
-			$password = $this->hash_password($password, $salt);
+			// Create a hashed password
+			$password = $this->hash_password($password);
 		}
 
 		return $this->_login($username, $password, $remember);
@@ -152,79 +146,24 @@ abstract class Kohana_Auth {
 	}
 
 	/**
-	 * Creates a hashed password from a plaintext password, inserting salt
-	 * based on the configured salt pattern.
+	 * Creates a hashed hmac password from a plaintext password
 	 *
 	 * @param   string  plaintext password
-	 * @return  string  hashed password string
 	 */
-	public function hash_password($password, $salt = FALSE)
+	public function hash_password($password)
 	{
-		if ($salt === FALSE)
-		{
-			// Create a salt seed, same length as the number of offsets in the pattern
-			$salt = substr($this->hash(uniqid(NULL, TRUE)), 0, count($this->_config['salt_pattern']));
-		}
-
-		// Password hash that the salt will be inserted into
-		$hash = $this->hash($salt.$password);
-
-		// Change salt to an array
-		$salt = str_split($salt, 1);
-
-		// Returned password
-		$password = '';
-
-		// Used to calculate the length of splits
-		$last_offset = 0;
-
-		foreach ($this->_config['salt_pattern'] as $offset)
-		{
-			// Split a new part of the hash off
-			$part = substr($hash, 0, $offset - $last_offset);
-
-			// Cut the current part out of the hash
-			$hash = substr($hash, $offset - $last_offset);
-
-			// Add the part to the password, appending the salt character
-			$password .= $part.array_shift($salt);
-
-			// Set the last offset to the current offset
-			$last_offset = $offset;
-		}
-
-		// Return the password, with the remaining hash appended
-		return $password.$hash;
+		return $this->hash($password);
 	}
 
 	/**
-	 * Perform a hash, using the configured method.
+	 * Perform a hmac hash, using the configured method.
 	 *
 	 * @param   string  string to hash
 	 * @return  string
 	 */
 	public function hash($str)
 	{
-		return hash($this->_config['hash_method'], $str);
-	}
-
-	/**
-	 * Finds the salt from a password, based on the configured salt pattern.
-	 *
-	 * @param   string  hashed password
-	 * @return  string
-	 */
-	public function find_salt($password)
-	{
-		$salt = '';
-
-		foreach ($this->_config['salt_pattern'] as $i => $offset)
-		{
-			// Find salt characters, take a good long look...
-			$salt .= substr($password, $offset + $i, 1);
-		}
-
-		return $salt;
+		return hash_hmac($this->_config['hash_method'], $str, $this->_config['key']);
 	}
 
 	protected function complete_login($user)

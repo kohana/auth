@@ -276,7 +276,7 @@ class Kohana_Auth_ORM extends Auth {
 			return FALSE;
 		}
 
-		$hash = $this->hash_password($password, $this->find_salt($user->password));
+		$hash = $this->hash_password($password);
 
 		return $hash == $user->password;
 	}
