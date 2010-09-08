@@ -1,0 +1,6 @@
+## [Auth]()
+- [Config](config)
+- [User Model](user)
+- [Register](register)
+- [Edit User](edit)
+- [Using Roles](roles)
