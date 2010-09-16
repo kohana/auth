@@ -143,7 +143,7 @@ class Model_Auth_User extends ORM {
 		}
 
 		// Update the number of logins
-		$this->logins += 1;
+		$this->logins = new Database_Expression('logins + 1');
 
 		// Set the last login date
 		$this->last_login = time();
