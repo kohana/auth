@@ -59,11 +59,12 @@ class Model_Auth_User extends ORM {
 	 */
 	public function login(array & $array, $redirect = FALSE)
 	{
+		$fieldname = $this->unique_key($array['username']);
 		$array = Validate::factory($array)
-			->label('username', $this->_labels['username'])
+			->label('username', $this->_labels[$fieldname])
 			->label('password', $this->_labels['password'])
 			->filter(TRUE, 'trim')
-			->rules('username', $this->_rules['username'])
+			->rules('username', $this->_rules[$fieldname])
 			->rules('password', $this->_rules['password']);
 
 		// Get the remember login option
@@ -75,7 +76,7 @@ class Model_Auth_User extends ORM {
 		if ($array->check())
 		{
 			// Attempt to load the user
-			$this->where('username', '=', $array['username'])->find();
+			$this->where($fieldname, '=', $array['username'])->find();
 
 			if ($this->loaded() AND Auth::instance()->login($this, $array['password'], $remember))
 			{
