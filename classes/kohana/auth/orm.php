@@ -2,7 +2,7 @@
 /**
  * ORM Auth driver.
  *
- * @package    Auth
+ * @package    Kohana/Auth
  * @author     Kohana Team
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
@@ -117,9 +117,10 @@ class Kohana_Auth_ORM extends Auth {
 	 * Forces a user to be logged in, without specifying a password.
 	 *
 	 * @param   mixed    username string, or user ORM object
+	 * @param   boolean  mark the session as forced
 	 * @return  boolean
 	 */
-	public function force_login($user)
+	public function force_login($user, $mark_session_as_forced = FALSE)
 	{
 		if ( ! is_object($user))
 		{
@@ -130,8 +131,11 @@ class Kohana_Auth_ORM extends Auth {
 			$user->where($user->unique_key($username), '=', $username)->find();
 		}
 
-		// Mark the session as forced, to prevent users from changing account information
-		$this->_session->set('auth_forced', TRUE);
+		if ($mark_session_as_forced === TRUE)
+		{
+			// Mark the session as forced, to prevent users from changing account information
+			$this->_session->set('auth_forced', TRUE);
+		}
 
 		// Run the standard completion
 		$this->complete_login($user);
