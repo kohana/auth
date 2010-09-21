@@ -1,5 +1,12 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
-
+/**
+ * Default auth user toke
+ *
+ * @package    Kohana/Auth
+ * @author     Kohana Team
+ * @copyright  (c) 2007-2009 Kohana Team
+ * @license    http://kohanaphp.com/license.html
+ */
 class Model_Auth_User_Token extends ORM {
 
 	// Relationships
