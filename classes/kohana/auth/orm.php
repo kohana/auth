@@ -4,7 +4,7 @@
  *
  * @package    Kohana/Auth
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
+ * @copyright  (c) 2007-2010 Kohana Team
  * @license    http://kohanaframework.org/license
  */
 class Kohana_Auth_ORM extends Auth {
