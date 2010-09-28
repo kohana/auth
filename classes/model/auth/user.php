@@ -5,7 +5,7 @@
  * @package    Kohana/Auth
  * @author     Kohana Team
  * @copyright  (c) 2007-2009 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @license    http://kohanaframework.org/license
  */
 class Model_Auth_User extends ORM {
 
