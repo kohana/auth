@@ -22,7 +22,7 @@ class Kohana_Auth_ORM extends Auth {
 		// Get the user from the session
 		$user = $this->get_user();
 
-		if (is_object($user) AND $user instanceof Model_User AND $user->loaded())
+		if ($user->loaded() AND $user instanceof Model_User AND $user->loaded())
 		{
 			// Everything is okay so far
 			$status = TRUE;
@@ -188,7 +188,7 @@ class Kohana_Auth_ORM extends Auth {
 	{
 		$user = parent::get_user();
 
-		if ($user === FALSE)
+		if ( ! $user->loaded())
 		{
 			// check for "remembered" login
 			$user = $this->auto_login();
@@ -274,7 +274,7 @@ class Kohana_Auth_ORM extends Auth {
 	{
 		$user = $this->get_user();
 
-		if ($user === FALSE)
+		if ( ! $user->loaded())
 		{
 			// nothing to compare
 			return FALSE;

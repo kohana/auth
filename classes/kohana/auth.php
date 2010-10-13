@@ -82,9 +82,9 @@ abstract class Kohana_Auth {
 	 *
 	 * @return  mixed
 	 */
-	public function get_user()
+	public function get_user($default = new User_Model)
 	{
-		return $this->_session->get($this->_config['session_key'], FALSE);
+		return $this->_session->get($this->_config['session_key'], $default);
 	}
 
 	/**
