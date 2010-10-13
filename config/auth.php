@@ -3,8 +3,8 @@
 return array(
 
 	'driver'       => 'ORM',
-	'hash_method'  => 'sha1',
-	'salt_pattern' => '1, 3, 5, 9, 14, 15, 20, 21, 28, 30',
+	'hash_method'  => 'sha256',
+	'hash_key'     => NULL,
 	'lifetime'     => 1209600,
 	'session_key'  => 'auth_user',
 
