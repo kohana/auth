@@ -14,7 +14,7 @@ return array(
 			'name' => 'Auth',
 
 			// A short description of this module, shown on the index page
-			'description' => 'Official Auth module, used for user authentication and authorization.',
+			'description' => 'User authentication and authorization.',
 			
 			// Copyright message, shown in the footer for this module
 			'copyright' => '&copy; 2008–2010 Kohana Team',
