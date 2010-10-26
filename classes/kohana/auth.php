@@ -3,10 +3,10 @@
  * User authorization library. Handles user login and logout, as well as secure
  * password hashing.
  *
- * @package    Auth
+ * @package    Kohana/Auth
  * @author     Kohana Team
- * @copyright  (c) 2007-2009 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2010 Kohana Team
+ * @license    http://kohanaframework.org/license
  */
 abstract class Kohana_Auth {
 
@@ -79,9 +79,9 @@ abstract class Kohana_Auth {
 	 *
 	 * @return  mixed
 	 */
-	public function get_user()
+	public function get_user($default = new User_Model)
 	{
-		return $this->_session->get($this->_config['session_key'], FALSE);
+		return $this->_session->get($this->_config['session_key'], $default);
 	}
 
 	/**

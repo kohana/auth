@@ -1,12 +1,12 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 /**
  * File Auth driver.
- * Note: this Auth driver does not support roles nor autologin.
+ * [!!] this Auth driver does not support roles nor autologin.
  *
- * @package    Auth
+ * @package    Kohana/Auth
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2010 Kohana Team
+ * @license    http://kohanaframework.org/license
  */
 class Kohana_Auth_File extends Auth {
 
