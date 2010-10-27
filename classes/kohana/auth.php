@@ -27,7 +27,7 @@ abstract class Kohana_Auth {
 
 			if ( ! $type = $config->get('driver'))
 			{
-				$type = 'ORM';
+				$type = 'file';
 			}
 
 			// Set the session class name
