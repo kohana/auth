@@ -13,9 +13,10 @@ class Kohana_Auth_ORM extends Auth {
 	 * Checks if a session is active.
 	 *
 	 * @param   mixed    role name string, role ORM object, or array with role names
+	 * @param   boolean  check user for every role applied (TRUE, by default) or if any?
 	 * @return  boolean
 	 */
-	public function logged_in($role = NULL)
+	public function logged_in($role = NULL, $all_required = TRUE)
 	{
 		$status = FALSE;
 
@@ -32,6 +33,9 @@ class Kohana_Auth_ORM extends Auth {
 				// Multiple roles to check
 				if (is_array($role))
 				{
+					// set initial status
+					$status = (bool) $all_required;
+
 					// Check each role
 					foreach ($role as $_role)
 					{
@@ -45,8 +49,16 @@ class Kohana_Auth_ORM extends Auth {
 						{
 							// Set the status false and get outta here
 							$status = FALSE;
-							break;
+							if ($all_required)
+							{
+								break;
+							}
 						}
+					   elseif ( ! $all_required )
+					   {
+						   $status = TRUE;
+						   break;
+					   }
 					}
 				}
 				// Single role to check
