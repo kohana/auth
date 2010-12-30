@@ -4,8 +4,8 @@
  *
  * @package    Kohana/Auth
  * @author     Kohana Team
- * @copyright  (c) 2007-2008 Kohana Team
- * @license    http://kohanaphp.com/license.html
+ * @copyright  (c) 2007-2010 Kohana Team
+ * @license    http://kohanaframework.org/license
  */
 class Kohana_Auth_ORM extends Auth {
 
@@ -13,6 +13,7 @@ class Kohana_Auth_ORM extends Auth {
 	 * Checks if a session is active.
 	 *
 	 * @param   mixed    role name string, role ORM object, or array with role names
+	 * @param   boolean  check user for every role applied (TRUE, by default) or if any?
 	 * @return  boolean
 	 */
 	public function logged_in($role = NULL, $all_required = TRUE)
@@ -287,35 +288,35 @@ class Kohana_Auth_ORM extends Auth {
 		return $hash == $user->password;
 	}
 
-    /**
-     * Remember user (create token and save it in cookie)
-     *
-     * @param  Model_User  $user
-     * @return boolean
-     */
-    public function remember($user = NULL)
-    {
-        if (is_null($user))
-        {
-            $user = $this->get_user();
-        }
-        if ( ! $user)
-        {
-            return FALSE;
-        }
+	/**
+	 * Remember user (create token and save it in cookie)
+	 *
+	 * @param  Model_User  $user
+	 * @return boolean
+	 */
+	public function remember($user = NULL)
+	{
+		if (is_null($user))
+		{
+			$user = $this->get_user();
+		}
+		if ( ! $user)
+		{
+			return FALSE;
+		}
 
-        // Create a new autologin token
-        $token = ORM::factory('user_token');
+		// Create a new autologin token
+		$token = ORM::factory('user_token');
 
-        // Set token data
-        $token->user_id = $user->id;
-        $token->expires = time() + $this->_config['lifetime'];
-        $token->save();
+		// Set token data
+		$token->user_id = $user->id;
+		$token->expires = time() + $this->_config['lifetime'];
+		$token->save();
 
-        // Set the autologin cookie
-        Cookie::set($this->_config['autologin_key'], $token->token, $this->_config['lifetime']);
+		// Set the autologin cookie
+		Cookie::set($this->_config['autologin_key'], $token->token, $this->_config['lifetime']);
 
-        return TRUE;
-    }
+		return TRUE;
+	}
 
 } // End Auth ORM
