@@ -75,11 +75,11 @@ abstract class Kohana_Auth {
 
 	/**
 	 * Gets the currently logged in user from the session.
-	 * Returns FALSE if no user is currently logged in.
+	 * Returns NULL if no user is currently logged in.
 	 *
 	 * @return  mixed
 	 */
-	public function get_user($default = new User_Model)
+	public function get_user($default = NULL)
 	{
 		return $this->_session->get($this->_config['session_key'], $default);
 	}
@@ -100,7 +100,7 @@ abstract class Kohana_Auth {
 		if (is_string($password))
 		{
 			// Create a hashed password
-			$password = $this->hash_password($password);
+			$password = $this->hash($password);
 		}
 
 		return $this->_login($username, $password, $remember);
@@ -135,7 +135,7 @@ abstract class Kohana_Auth {
 
 	/**
 	 * Check if there is an active session. Optionally allows checking for a
-	 * specific role. 
+	 * specific role.
 	 *
 	 * @param   string   role name
 	 * @return  mixed
@@ -146,8 +146,10 @@ abstract class Kohana_Auth {
 	}
 
 	/**
-	 * Creates a hashed hmac password from a plaintext password
+	 * Creates a hashed hmac password from a plaintext password. This
+	 * method is deprecated, [Auth::hash] should be used instead.
 	 *
+	 * @deprecated
 	 * @param   string  plaintext password
 	 */
 	public function hash_password($password)
@@ -163,7 +165,10 @@ abstract class Kohana_Auth {
 	 */
 	public function hash($str)
 	{
-		return hash_hmac($this->_config['hash_method'], $str, $this->_config['key']);
+		if ( ! $this->_config['hash_key'])
+			throw new Kohana_Exception('A valid hash key must be set in your auth config.');
+
+		return hash_hmac($this->_config['hash_method'], $str, $this->_config['hash_key']);
 	}
 
 	protected function complete_login($user)
