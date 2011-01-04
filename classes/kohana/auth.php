@@ -40,16 +40,6 @@ abstract class Kohana_Auth {
 		return Auth::$_instance;
 	}
 
-	/**
-	 * Create an instance of Auth.
-	 *
-	 * @return  Auth
-	 */
-	public static function factory($config = array())
-	{
-		return new Auth($config);
-	}
-
 	protected $_session;
 
 	protected $_config;
@@ -142,7 +132,7 @@ abstract class Kohana_Auth {
 	 */
 	public function logged_in($role = NULL)
 	{
-		return FALSE !== $this->get_user();
+		return ($this->get_user() !== FALSE);
 	}
 
 	/**
