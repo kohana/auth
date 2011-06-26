@@ -23,7 +23,7 @@ abstract class Kohana_Auth {
 		if ( ! isset(Auth::$_instance))
 		{
 			// Load the configuration for this type
-			$config = Kohana::config('auth');
+			$config = Kohana::$config->load('auth');
 
 			if ( ! $type = $config->get('driver'))
 			{
