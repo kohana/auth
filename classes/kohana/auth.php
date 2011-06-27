@@ -87,12 +87,6 @@ abstract class Kohana_Auth {
 		if (empty($password))
 			return FALSE;
 
-		if (is_string($password))
-		{
-			// Create a hashed password
-			$password = $this->hash($password);
-		}
-
 		return $this->_login($username, $password, $remember);
 	}
 
