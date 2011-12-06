@@ -1,5 +1,6 @@
 ## [Auth]()
 - [Configuration](config)
 - [Log in and out](login)
-- [File Driver](driver/file)
-- [Developing Drivers](driver/develop)
+- Drivers
+  - [File](driver/file)
+  - [Developing](driver/develop)

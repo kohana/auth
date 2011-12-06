@@ -1,8 +1,14 @@
 # Developing Drivers
 
+## Real World Example
+
+Sometimes the best way to learn is to jump right in and read the code from another module. The [ORM](https://github.com/kohana/orm/blob/3.2/develop/classes/kohana/auth/orm.php) module comes with an auth driver you can learn from.
+
 [!!] We will be developing an `example` driver. In your own driver you will substitute `example` with your driver name.
 
 This example file would be saved at `APPPATH/classes/auth/example.php` (or `MODPATH` if you are creating a module).
+
+---
 
 ## Quick Example
 
@@ -71,9 +77,3 @@ public function get_user($default = NULL)
 ## Activating the Driver
 
 After you create your driver you will want to use it. It is a easy as setting the `driver` [configuration](config) option to the name of your driver (in our case `example`).
-
-## Real World Examples
-
-Sometimes the best way to learn is to just read the code. Here are a auth drivers that you can take a look at.
-
-* [ORM](https://github.com/kohana/orm/blob/3.2/master/classes/kohana/auth/orm.php)
