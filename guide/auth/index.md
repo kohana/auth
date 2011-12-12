@@ -14,4 +14,6 @@ Kohana::modules(array(
 
 Next, you will then need to [configure](config) the auth module.
 
-The auth module provides the [Auth::File] driver for you. As your application needs change you may need to find another driver or [develop](driver/develop) your own.
+The auth module provides the [Auth::File] driver for you. There is also an auth driver included with the ORM module.
+
+As your application needs change you may need to find another driver or [develop](driver/develop) your own.

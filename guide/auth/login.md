@@ -23,7 +23,20 @@ else
 
 ## Logged in User
 
-To find the user that is logged in call [Auth::get_user].
+There are two ways to check if a user is logged in. If you just need to check if the user is logged in use [Auth::logged_in].
+
+~~~
+if (Auth::instance()->logged_in())
+{
+	// User is logged in, continue on
+}
+else
+{
+	// User isn't logged in, redirect to the login form.
+}
+~~~
+
+You can also get the logged in user object by using [Auth::get_user]. If the user is null, then no user was found.
 
 ~~~
 $user = Auth::instance()->get_user();
