@@ -2,7 +2,7 @@
 
 return array(
 
-	'driver'       => 'file',
+	'driver'       => 'File',
 	'hash_method'  => 'sha256',
 	'hash_key'     => NULL,
 	'lifetime'     => 1209600,
