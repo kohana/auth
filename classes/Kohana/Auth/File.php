@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 /**
  * File Auth driver.
  * [!!] this Auth driver does not support roles nor autologin.
